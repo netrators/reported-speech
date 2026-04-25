@@ -94,7 +94,7 @@
                 reportedTense: 'Simple Past',
                 exampleDirect: 'Jack is very talented.',
                 exampleReported: 'She said Jack was very talented.',
-                note: 'El presente se mueve un paso al pasado.'
+                note: 'Cuando reportamos una verdad o estado actual, el verbo "is/am/are" retrocede a "was/were". Esto indica que estamos relatando algo que ocurrió en un momento específico del pasado.'
             },
             {
                 id: 'present_prog',
@@ -102,7 +102,7 @@
                 reportedTense: 'Past Progressive',
                 exampleDirect: "I'm learning the piano.",
                 exampleReported: 'He mentioned he was learning the piano.',
-                note: 'Am/Is/Are -> Was/Were.'
+                note: 'Las acciones que ocurren "ahora" se reportan como acciones que "estaban ocurriendo" en ese momento pasado. Am/Is/Are + ing → Was/Were + ing.'
             },
             {
                 id: 'present_perfect',
@@ -110,7 +110,7 @@
                 reportedTense: 'Past Perfect',
                 exampleDirect: 'I have lost my wallet.',
                 exampleReported: 'She complained she had lost her wallet.',
-                note: 'Have/Has -> Had.'
+                note: 'El Present Perfect conecta el pasado con el presente. Al reportarlo, esa conexión se pierde y se convierte en un pasado más lejano (Pasado del Pasado o Past Perfect).'
             },
             {
                 id: 'simple_past',
@@ -118,7 +118,7 @@
                 reportedTense: 'Past Perfect',
                 exampleDirect: 'We saw a great movie.',
                 exampleReported: 'They told us they had seen a great movie.',
-                note: 'El pasado simple retrocede al pasado del pasado.'
+                note: 'Si el evento original ya era pasado, al reportarlo debemos usar el Past Perfect para clarificar que esa acción sucedió antes del momento en que se dijo la frase.'
             },
             {
                 id: 'future_will',
@@ -126,7 +126,7 @@
                 reportedTense: 'Conditional (Would)',
                 exampleDirect: 'I will help you later.',
                 exampleReported: 'She promised she would help me later.',
-                note: 'Will -> Would.'
+                note: 'Will expresa futuro desde el presente. Would expresa ese mismo futuro pero visto desde una perspectiva pasada. Es la forma más común de reportar promesas y planes.'
             },
             {
                 id: 'can_modal',
@@ -134,7 +134,7 @@
                 reportedTense: 'Could / Might',
                 exampleDirect: 'I can play the guitar.',
                 exampleReported: 'He said he could play the guitar.',
-                note: 'Los modales también retroceden.'
+                note: 'Los verbos modales también tienen su forma de pasado. "Can" cambia a "could" para reportar habilidad o posibilidad, manteniendo el resto de la estructura igual.'
             }
         ];
 
@@ -155,16 +155,16 @@
                 tense: 'Present Continuous',
                 direct: '"I am studying for my finals," said Maria.',
                 correct: 'Maria said she was studying for her finals',
-                hint: 'Am studying -> Was studying.',
-                explanation: 'En estilo indirecto, el presente continuo se convierte en pasado continuo.'
+                hint: 'Cambia "am studying" y el pronombre "my".',
+                explanation: 'Aquí ocurren tres cambios: 1. El pronombre "I" cambia a "she" para coincidir con Maria. 2. El tiempo verbal retrocede de Presente Continuo a Pasado Continuo. 3. El posesivo "my" cambia a "her".'
             },
             {
                 id: 2,
                 tense: 'Future with Will',
                 direct: '"We will arrive at 8 PM," they told us.',
                 correct: 'They told us they would arrive at 8 PM',
-                hint: 'Will -> Would.',
-                explanation: 'Will cambia a would en el estilo indirecto.'
+                hint: 'Will -> Would. We -> They.',
+                explanation: 'En este caso, "we" se convierte en "they" porque reportamos lo que ellos dijeron sobre sí mismos. El auxiliar "will" se convierte en "would", que es su forma condicional requerida en el estilo indirecto.'
             },
             {
                 id: 3,
@@ -172,7 +172,7 @@
                 direct: '"I bought a new car yesterday," said Paul.',
                 correct: 'Paul said he had bought a new car the day before',
                 hint: 'Past Simple -> Past Perfect. Yesterday -> The day before.',
-                explanation: 'Recuerda el doble cambio: el tiempo verbal y la expresión de tiempo.'
+                explanation: 'Este es un ejercicio avanzado: 1. El verbo "bought" (Pasado Simple) retrocede a "had bought" (Pasado Perfecto). 2. El marcador de tiempo "yesterday" cambia a "the day before" o "the previous day" para ser preciso.'
             },
             {
                 id: 4,
@@ -180,15 +180,15 @@
                 direct: '"She has finished her homework," noted the teacher.',
                 correct: 'The teacher noted she had finished her homework',
                 hint: 'Has finished -> Had finished.',
-                explanation: 'El presente perfecto se transforma en pasado perfecto.'
+                explanation: 'El Presente Perfecto (has finished) indica una acción reciente. Al reportarlo, lo movemos al Pasado Perfecto (had finished). Como el sujeto es "she", no cambia el pronombre ni el posesivo "her".'
             },
             {
                 id: 5,
                 tense: 'Can Modal',
                 direct: '"I can fix your computer," he mentioned.',
                 correct: 'He mentioned he could fix my computer',
-                hint: 'Can -> Could.',
-                explanation: 'El modal "can" retrocede a "could".'
+                hint: 'Can -> Could. I -> He. Your -> My.',
+                explanation: 'Fíjate en los pronombres: "I" es él, pero "your computer" se refiere a la mía, así que cambia a "my". El modal "can" se convierte en "could" para mostrar habilidad reportada.'
             }
         ];
 
@@ -197,61 +197,61 @@
                 question: "If someone says 'I am happy', what is the reported version?",
                 options: ["He said he is happy", "He said he was happy", "He told he was happy", "He said I was happy"],
                 answer: 1,
-                explanation: "Simple Present cambia a Simple Past. 'Say' no lleva objeto indirecto directo."
+                explanation: "El presente simple 'am' debe retroceder a pasado simple 'was'. No usamos 'told' porque no hay un receptor mencionado (me, him, etc.)."
             },
             {
                 question: "Change to Reported: 'I have finished the report.'",
                 options: ["She said she finished the report", "She said she has finished the report", "She said she had finished the report", "She mentioned she had finish the report"],
                 answer: 2,
-                explanation: "Present Perfect retrocede a Past Perfect (had + V3)."
+                explanation: "El Presente Perfecto ('have finished') siempre retrocede a Pasado Perfecto ('had finished'). La opción D es incorrecta porque el verbo 'finish' no está en participio."
             },
             {
                 question: "Report this: 'I will see you here tomorrow.'",
                 options: ["He said he would see me there the next day", "He said he will see me there tomorrow", "He told me he would see me here the next day", "He said he would saw me there the next day"],
                 answer: 0,
-                explanation: "Will->Would, Here->There, Tomorrow->The next day. Triple cambio."
+                explanation: "Ocurre un 'triple cambio': Will → Would, Here → There, y Tomorrow → The next day. Solo la opción A cumple con los tres."
             },
             {
                 question: "Which reporting verb is used correctly?",
                 options: ["He said me that he was tired", "He told that he was tired", "He told me that he was tired", "He said to me he is tired"],
                 answer: 2,
-                explanation: "'Tell' requiere un objeto (me, him, etc.). 'Say' se usa sin objeto o con 'to'."
+                explanation: "Regla B2: 'Tell' SIEMPRE necesita un objeto (me, us, Paul). 'Say' nunca lo lleva directamente (tendría que ser 'said to me')."
             },
             {
                 question: "Report: 'I can't swim.'",
                 options: ["She said she couldn't swim", "She said she can't swim", "She told she couldn't swim", "She mentioned she can't swam"],
                 answer: 0,
-                explanation: "Can't cambia a couldn't."
+                explanation: "El modal negativo 'can't' retrocede a 'couldn't'. El verbo principal 'swim' se queda en infinitivo sin 'to'."
             },
             {
                 question: "Direct: 'Did you see the news?'",
                 options: ["He asked if I see the news", "He asked if I had seen the news", "He told me if I saw the news", "He asked if I would see the news"],
                 answer: 1,
-                explanation: "Pregunta en Pasado Simple retrocede a Pasado Perfecto."
+                explanation: "En las preguntas de Yes/No: 1. Usamos 'asked'. 2. Usamos 'if'. 3. Retrocedemos el tiempo: Pasado Simple → Pasado Perfecto."
             },
             {
                 question: "Report: 'Don't open the window.'",
                 options: ["He said me not to open the window", "He told me to not open the window", "He told me not to open the window", "He asked me don't open the window"],
                 answer: 2,
-                explanation: "Imperativos negativos se reportan con 'told + person + not to + verb'."
+                explanation: "Las órdenes (imperativos) negativas se reportan con la estructura: Told + Objeto + NOT TO + Verbo base."
             },
             {
                 question: "If the reporting verb is in Present (He says...), do we change the tense?",
                 options: ["Yes, always", "No, it stays the same", "Only if it is a fact", "Only for the future"],
                 answer: 1,
-                explanation: "Si el verbo de reporte está en presente (He says), no hay retroceso (backshift)."
+                explanation: "¡Excepción importante! Si el verbo que introduce la frase está en presente (He says, She reports), el tiempo verbal de la frase original NO cambia."
             },
             {
                 question: "Direct: 'I am leaving now.'",
                 options: ["She said she was leaving then", "She said she is leaving now", "She mentioned she was leaving now", "She said she was leave then"],
                 answer: 0,
-                explanation: "Now cambia a Then y Am leaving a Was leaving."
+                explanation: "Debemos cambiar el tiempo (Am leaving → Was leaving) y el marcador temporal (Now → Then)."
             },
             {
                 question: "Report: 'I must go.'",
                 options: ["He said he must to go", "He said he had to go", "He said he would go", "He mentioned he has to go"],
                 answer: 1,
-                explanation: "Must suele cambiar a 'had to' en el estilo indirecto."
+                explanation: "Aunque a veces se mantiene 'must', lo más correcto y común en B2 es cambiar 'must' por 'had to' (la forma pasada de obligación)."
             }
         ];
 
@@ -302,8 +302,8 @@
                     >
                         The Art of <span className="text-purple-600">Reported Speech</span>
                     </motion.h1>
-                    <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-                        Dominar el estilo indirecto es clave para reportar lo que otros dicen de forma natural y profesional.
+                    <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+                        Dominar el estilo indirecto es clave para reportar lo que otros dicen de forma natural y profesional. Aquí tienes las reglas del **Backshift**.
                     </p>
                 </header>
 
@@ -320,22 +320,22 @@
                             <div className="space-y-4 mb-6 flex-grow">
                                 <div className="direct-speech-bubble text-sm italic">
                                     <div className="flex justify-between items-center mb-1">
-                                        <p className="text-slate-400 font-bold text-[10px] uppercase">Direct</p>
+                                        <p className="text-slate-400 font-bold text-[10px] uppercase">Direct Speech</p>
                                         <button onClick={() => speak(rule.exampleDirect)} className="text-slate-300 hover:text-purple-500"><i className="fa-solid fa-volume-high"></i></button>
                                     </div>
                                     <p className="text-slate-700">"{rule.exampleDirect}"</p>
                                 </div>
                                 <div className="reported-speech-bubble text-sm font-bold">
                                     <div className="flex justify-between items-center mb-1">
-                                        <p className="text-pink-400 font-bold text-[10px] uppercase">Reported</p>
+                                        <p className="text-pink-400 font-bold text-[10px] uppercase">Reported Version</p>
                                         <button onClick={() => speak(rule.exampleReported)} className="text-pink-300 hover:text-pink-600"><i className="fa-solid fa-volume-high"></i></button>
                                     </div>
                                     <p className="text-slate-800">{rule.exampleReported}</p>
                                 </div>
                             </div>
                             <div className="mt-auto pt-4 border-t border-slate-50">
-                                <p className="text-[11px] leading-relaxed text-slate-500 italic">
-                                    <strong>💡 Nota:</strong> {rule.note}
+                                <p className="text-[11px] leading-relaxed text-slate-600 font-medium italic">
+                                    <strong>💡 Explicación:</strong> {rule.note}
                                 </p>
                             </div>
                         </div>
@@ -347,6 +347,9 @@
                         <h2 className="text-2xl font-black mb-6 flex items-center gap-3">
                             <i className="fa-solid fa-clock text-cyan-400"></i> Time & Place Changes
                         </h2>
+                        <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                            No solo cambian los verbos. Los adverbios de tiempo y lugar deben ajustarse porque el momento en que reportas ya no es el "ahora" original.
+                        </p>
                         <div className="grid grid-cols-2 gap-3">
                             {TIME_PLACE_CHANGES.map((item, i) => (
                                 <div key={i} className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/10 text-sm">
@@ -359,19 +362,20 @@
                     </div>
                     <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-purple-100 flex flex-col justify-center">
                         <h2 className="text-2xl font-black mb-4 text-slate-800 flex items-center gap-3">
-                            <i className="fa-solid fa-bullhorn text-purple-600"></i> Reporting Verbs
+                            <i className="fa-solid fa-bullhorn text-purple-600"></i> Reporting Verbs Mastery
                         </h2>
                         <p className="text-slate-600 text-sm mb-6 leading-relaxed">
-                            No te limites a usar solo "say" o "tell". En B2, usa verbos que añadan matices de intención:
+                            A nivel B2, variar tus verbos demuestra fluidez. Cada verbo indica una intención distinta del hablante original:
                         </p>
-                        <div className="flex flex-wrap gap-2 mb-6">
+                        <div className="grid grid-cols-2 gap-2 mb-6">
                             {['promised', 'admitted', 'complained', 'explained', 'mentioned', 'reminded'].map(v => (
-                                <span key={v} className="px-3 py-1 bg-purple-50 text-purple-700 rounded-lg text-xs font-bold border border-purple-100">{v}</span>
+                                <span key={v} className="px-3 py-1 bg-purple-50 text-purple-700 rounded-lg text-xs font-bold border border-purple-100 text-center">{v}</span>
                             ))}
                         </div>
                         <div className="p-4 bg-pink-50 rounded-2xl border border-pink-100 text-sm italic">
-                            <p><strong>He said me... ❌</strong></p>
-                            <p><strong>He told me... ✅</strong></p>
+                            <p className="mb-2"><strong>Diferencia clave:</strong></p>
+                            <p className="text-slate-700">Say: Se usa para reportar el contenido sin mencionar a quién se le dice.</p>
+                            <p className="text-slate-700">Tell: Se usa para reportar a quién se le dio la información (requiere objeto).</p>
                         </div>
                     </div>
                 </div>
@@ -412,38 +416,48 @@
                             <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Desafío de Retroceso</p>
                             <h2 className="text-2xl font-bold mt-1">Laboratorio de Reporte</h2>
                             <div className="mt-4 flex justify-center gap-2">
-                                <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold">Nivel: {curr.tense}</span>
+                                <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold">Tense: {curr.tense}</span>
                             </div>
                         </div>
                         <div className="p-8 md:p-12 space-y-10">
-                            <div className="text-center italic">
-                                <h3 className="text-2xl font-black text-slate-800">"{curr.direct}"</h3>
+                            <div className="text-center">
+                                <p className="text-xs font-bold text-slate-400 uppercase mb-2">Direct Speech Original:</p>
+                                <h3 className="text-2xl font-black text-slate-800 italic leading-relaxed">"{curr.direct}"</h3>
                             </div>
                             <div className="space-y-3">
-                                <label className="text-sm font-bold text-slate-500 block">Escribe el estilo indirecto:</label>
+                                <label className="text-sm font-bold text-slate-500 block ml-1">Escribe la versión reportada:</label>
                                 <textarea 
-                                    className={`w-full p-5 rounded-2xl border-2 text-lg outline-none transition-all resize-none ${feedback === true ? 'border-success bg-green-50' : feedback === false ? 'border-pink-500 bg-pink-50' : 'border-slate-100 focus:border-purple-600'}`}
-                                    placeholder="He said that..."
+                                    className={`w-full p-5 rounded-2xl border-2 text-lg outline-none transition-all resize-none font-medium ${feedback === true ? 'border-success bg-green-50 text-green-900' : feedback === false ? 'border-pink-500 bg-pink-50 text-pink-900' : 'border-slate-100 focus:border-purple-600'}`}
+                                    placeholder="Maria said that she..."
                                     rows="2"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                 />
-                                <p className="text-[11px] text-slate-400 italic">💡 {curr.hint}</p>
+                                <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium ml-1">
+                                    <i className="fa-solid fa-lightbulb text-yellow-500"></i>
+                                    <span>Pista: {curr.hint}</span>
+                                </div>
                             </div>
                             <AnimatePresence>
                                 {evaluando && (
-                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-6 rounded-2xl ${feedback ? 'bg-green-50 border border-green-200 text-green-900' : 'bg-pink-50 border border-pink-200 text-pink-900'}`}>
-                                        <p className="font-bold mb-2">{feedback ? '¡Correcto!' : '¡Casi!'}</p>
-                                        <p className="text-sm mb-2"><strong>R:</strong> {curr.correct}.</p>
-                                        <p className="text-xs opacity-75">{curr.explanation}</p>
+                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-6 rounded-2xl ${feedback ? 'bg-green-50 border border-green-200 text-green-900 shadow-sm' : 'bg-pink-50 border border-pink-200 text-pink-900 shadow-sm'}`}>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <i className={`fa-solid ${feedback ? 'fa-check-circle' : 'fa-times-circle'}`}></i>
+                                            <p className="font-bold">{feedback ? '¡Excelente análisis!' : 'Revisa la estructura...'}</p>
+                                        </div>
+                                        <p className="text-sm mb-3"><strong>Respuesta sugerida:</strong> {curr.correct}.</p>
+                                        <div className="bg-white/60 p-4 rounded-xl text-xs leading-relaxed italic border border-slate-100 text-slate-700">
+                                            <strong>📚 Análisis B2:</strong> {curr.explanation}
+                                        </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-                            <div className="flex justify-end gap-3 pt-6 border-t border-slate-50">
+                            <div className="flex justify-between items-center pt-6 border-t border-slate-50">
+                                <button onClick={() => { setInput(""); setEvaluando(false); setFeedback(null); }} className="text-slate-400 font-bold text-xs hover:text-slate-600 uppercase tracking-tighter">Limpiar</button>
                                 {!evaluando ? (
-                                    <button onClick={handleCheck} disabled={!input} className="bg-purple-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-purple-100 disabled:opacity-50">Comprobar</button>
+                                    <button onClick={handleCheck} disabled={!input} className="bg-purple-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-purple-100 disabled:opacity-50 hover:bg-purple-700 transition-colors">Comprobar</button>
                                 ) : (
-                                    <button onClick={handleNext} className="bg-slate-900 text-white px-8 py-3 rounded-full font-bold shadow-lg">Siguiente <i className="fa-solid fa-arrow-right ml-1"></i></button>
+                                    <button onClick={handleNext} className="bg-slate-900 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-black transition-colors">Siguiente <i className="fa-solid fa-arrow-right ml-1"></i></button>
                                 )}
                             </div>
                         </div>
@@ -488,9 +502,9 @@
                         <h2 className="text-4xl font-black text-slate-900">¡Resultados!</h2>
                         <p className="text-8xl font-black text-purple-600">{score}<span className="text-3xl text-slate-300">/10</span></p>
                         <p className="text-slate-500 font-medium">
-                            {score >= 8 ? "¡Excelente nivel B2!" : score >= 5 ? "Buen progreso, pero sigue practicando." : "Te recomendamos repasar la teoría."}
+                            {score >= 8 ? "¡Excelente nivel B2! Dominas los matices." : score >= 5 ? "Buen progreso, pero repasa los tiempos complejos." : "Te recomendamos volver a la sección de Maestría."}
                         </p>
-                        <button onClick={() => window.location.reload()} className="bg-purple-600 text-white px-10 py-4 rounded-full font-black text-lg shadow-lg">Volver al Inicio</button>
+                        <button onClick={() => window.location.reload()} className="bg-purple-600 text-white px-10 py-4 rounded-full font-black text-lg shadow-lg hover:bg-purple-700">Volver al Inicio</button>
                     </div>
                 </div>
             );
@@ -512,7 +526,7 @@
                                     let style = "p-5 rounded-2xl border-2 font-bold text-left transition-all flex items-center justify-between text-sm md:text-base ";
                                     if (!evaluado) style += selected === i ? "border-purple-600 bg-purple-50 text-purple-700" : "border-slate-50 hover:bg-slate-50 text-slate-600";
                                     else {
-                                        if (i === q.answer) style += "border-success bg-green-50 text-success";
+                                        if (i === q.answer) style += "border-success bg-green-50 text-success shadow-sm";
                                         else if (selected === i) style += "border-pink-500 bg-pink-50 text-pink-600";
                                         else style += "border-slate-50 text-slate-300 opacity-60";
                                     }
@@ -527,13 +541,16 @@
                             <AnimatePresence>
                                 {evaluado && (
                                     <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="bg-purple-50 p-5 rounded-2xl border border-purple-100 text-xs md:text-sm text-purple-800 italic">
-                                        <strong>💡 Análisis:</strong> {q.explanation}
+                                        <div className="flex gap-3">
+                                            <i className="fa-solid fa-lightbulb text-purple-500 mt-1"></i>
+                                            <p><strong>💡 Por qué:</strong> {q.explanation}</p>
+                                        </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
                             <div className="flex justify-end pt-4">
-                                <button onClick={handleNext} disabled={!evaluado} className={`px-10 py-4 rounded-full font-black text-lg transition-all ${evaluado ? 'bg-purple-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400'}`}>
-                                    {currQ < 9 ? 'Siguiente' : 'Finalizar'}
+                                <button onClick={handleNext} disabled={!evaluado} className={`px-10 py-4 rounded-full font-black text-lg transition-all ${evaluado ? 'bg-purple-600 text-white shadow-lg hover:bg-purple-700' : 'bg-slate-100 text-slate-400'}`}>
+                                    {currQ < 9 ? 'Siguiente Pregunta' : 'Finalizar Examen'}
                                 </button>
                             </div>
                         </div>
@@ -571,7 +588,7 @@
                             { id: 'practice', icon: 'fa-flask' },
                             { id: 'quiz', icon: 'fa-medal' }
                         ].map(t => (
-                            <button key={t.id} onClick={() => setTab(t.id)} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${tab === t.id ? 'bg-purple-600 text-white' : 'text-slate-400'}`}>
+                            <button key={t.id} onClick={() => setTab(t.id)} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${tab === t.id ? 'bg-purple-600 text-white shadow-md scale-110' : 'text-slate-400'}`}>
                                 <i className={`fa-solid ${t.icon}`}></i>
                             </button>
                         ))}
