@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2 Masterclass: The Reported Speech Expert</title>
+    
+    <!-- Frameworks & CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.12.16/dist/framer-motion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8f7ff;
+            color: #1e1b4b;
+            overflow-x: hidden;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.1);
+        }
+
+        .direct-speech-bubble {
+            background: #ffffff;
+            border-left: 5px solid var(--primary);
+            padding: 1.25rem;
+            border-radius: 0 1.25rem 1.25rem 1.25rem;
+            box-shadow: 4px 4px 0px rgba(139, 92, 246, 0.05);
+        }
+
+        .reported-speech-bubble {
+            background: #fdf2f8;
+            border-left: 5px solid var(--secondary);
+            padding: 1.25rem;
+            border-radius: 0 1.25rem 1.25rem 1.25rem;
+            box-shadow: 4px 4px 0px rgba(236, 72, 153, 0.05);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f5f3ff; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ddd6fe; border-radius: 10px; }
+
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .float-anim { animation: subtle-float 6s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+        const { motion, AnimatePresence } = window.Motion;
+
+        // --- UTILS: Text to Speech ---
+        const speak = (text, rate = 0.85) => {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = rate;
+            window.speechSynthesis.speak(utterance);
+        };
+
+        // --- DATABASE ---
+        const BACKSHIFT_DATA = [
+            {
+                id: 'simple_present',
+                directTense: 'Simple Present',
+                reportedTense: 'Simple Past',
+                exampleDirect: 'Jack is very talented.',
+                exampleReported: 'She said Jack was very talented.',
+                note: 'El presente se mueve un paso al pasado.'
+            },
+            {
+                id: 'present_prog',
+                directTense: 'Present Progressive',
+                reportedTense: 'Past Progressive',
+                exampleDirect: "I'm learning the piano.",
+                exampleReported: 'He mentioned he was learning the piano.',
+                note: 'Am/Is/Are -> Was/Were.'
+            },
+            {
+                id: 'present_perfect',
+                directTense: 'Present Perfect',
+                reportedTense: 'Past Perfect',
+                exampleDirect: 'I have lost my wallet.',
+                exampleReported: 'She complained she had lost her wallet.',
+                note: 'Have/Has -> Had.'
+            },
+            {
+                id: 'simple_past',
+                directTense: 'Simple Past',
+                reportedTense: 'Past Perfect',
+                exampleDirect: 'We saw a great movie.',
+                exampleReported: 'They told us they had seen a great movie.',
+                note: 'El pasado simple retrocede al pasado del pasado.'
+            },
+            {
+                id: 'future_will',
+                directTense: 'Future (Will)',
+                reportedTense: 'Conditional (Would)',
+                exampleDirect: 'I will help you later.',
+                exampleReported: 'She promised she would help me later.',
+                note: 'Will -> Would.'
+            },
+            {
+                id: 'can_modal',
+                directTense: 'Can / May',
+                reportedTense: 'Could / Might',
+                exampleDirect: 'I can play the guitar.',
+                exampleReported: 'He said he could play the guitar.',
+                note: 'Los modales también retroceden.'
+            }
+        ];
+
+        const TIME_PLACE_CHANGES = [
+            { from: 'now', to: 'then' },
+            { from: 'today', to: 'that day' },
+            { from: 'yesterday', to: 'the day before' },
+            { from: 'tomorrow', to: 'the next day' },
+            { from: 'next week', to: 'the following week' },
+            { from: 'here', to: 'there' },
+            { from: 'this', to: 'that' },
+            { from: 'ago', to: 'before' }
+        ];
+
+        const PRACTICE_SENTENCES = [
+            {
+                id: 1,
+                tense: 'Present Continuous',
+                direct: '"I am studying for my finals," said Maria.',
+                correct: 'Maria said she was studying for her finals',
+                hint: 'Am studying -> Was studying.',
+                explanation: 'En estilo indirecto, el presente continuo se convierte en pasado continuo.'
+            },
+            {
+                id: 2,
+                tense: 'Future with Will',
+                direct: '"We will arrive at 8 PM," they told us.',
+                correct: 'They told us they would arrive at 8 PM',
+                hint: 'Will -> Would.',
+                explanation: 'Will cambia a would en el estilo indirecto.'
+            },
+            {
+                id: 3,
+                tense: 'Simple Past',
+                direct: '"I bought a new car yesterday," said Paul.',
+                correct: 'Paul said he had bought a new car the day before',
+                hint: 'Past Simple -> Past Perfect. Yesterday -> The day before.',
+                explanation: 'Recuerda el doble cambio: el tiempo verbal y la expresión de tiempo.'
+            },
+            {
+                id: 4,
+                tense: 'Present Perfect',
+                direct: '"She has finished her homework," noted the teacher.',
+                correct: 'The teacher noted she had finished her homework',
+                hint: 'Has finished -> Had finished.',
+                explanation: 'El presente perfecto se transforma en pasado perfecto.'
+            },
+            {
+                id: 5,
+                tense: 'Can Modal',
+                direct: '"I can fix your computer," he mentioned.',
+                correct: 'He mentioned he could fix my computer',
+                hint: 'Can -> Could.',
+                explanation: 'El modal "can" retrocede a "could".'
+            }
+        ];
+
+        const QUIZ_QUESTIONS = [
+            {
+                question: "If someone says 'I am happy', what is the reported version?",
+                options: ["He said he is happy", "He said he was happy", "He told he was happy", "He said I was happy"],
+                answer: 1,
+                explanation: "Simple Present cambia a Simple Past. 'Say' no lleva objeto indirecto directo."
+            },
+            {
+                question: "Change to Reported: 'I have finished the report.'",
+                options: ["She said she finished the report", "She said she has finished the report", "She said she had finished the report", "She mentioned she had finish the report"],
+                answer: 2,
+                explanation: "Present Perfect retrocede a Past Perfect (had + V3)."
+            },
+            {
+                question: "Report this: 'I will see you here tomorrow.'",
+                options: ["He said he would see me there the next day", "He said he will see me there tomorrow", "He told me he would see me here the next day", "He said he would saw me there the next day"],
+                answer: 0,
+                explanation: "Will->Would, Here->There, Tomorrow->The next day. Triple cambio."
+            },
+            {
+                question: "Which reporting verb is used correctly?",
+                options: ["He said me that he was tired", "He told that he was tired", "He told me that he was tired", "He said to me he is tired"],
+                answer: 2,
+                explanation: "'Tell' requiere un objeto (me, him, etc.). 'Say' se usa sin objeto o con 'to'."
+            },
+            {
+                question: "Report: 'I can't swim.'",
+                options: ["She said she couldn't swim", "She said she can't swim", "She told she couldn't swim", "She mentioned she can't swam"],
+                answer: 0,
+                explanation: "Can't cambia a couldn't."
+            },
+            {
+                question: "Direct: 'Did you see the news?'",
+                options: ["He asked if I see the news", "He asked if I had seen the news", "He told me if I saw the news", "He asked if I would see the news"],
+                answer: 1,
+                explanation: "Pregunta en Pasado Simple retrocede a Pasado Perfecto."
+            },
+            {
+                question: "Report: 'Don't open the window.'",
+                options: ["He said me not to open the window", "He told me to not open the window", "He told me not to open the window", "He asked me don't open the window"],
+                answer: 2,
+                explanation: "Imperativos negativos se reportan con 'told + person + not to + verb'."
+            },
+            {
+                question: "If the reporting verb is in Present (He says...), do we change the tense?",
+                options: ["Yes, always", "No, it stays the same", "Only if it is a fact", "Only for the future"],
+                answer: 1,
+                explanation: "Si el verbo de reporte está en presente (He says), no hay retroceso (backshift)."
+            },
+            {
+                question: "Direct: 'I am leaving now.'",
+                options: ["She said she was leaving then", "She said she is leaving now", "She mentioned she was leaving now", "She said she was leave then"],
+                answer: 0,
+                explanation: "Now cambia a Then y Am leaving a Was leaving."
+            },
+            {
+                question: "Report: 'I must go.'",
+                options: ["He said he must to go", "He said he had to go", "He said he would go", "He mentioned he has to go"],
+                answer: 1,
+                explanation: "Must suele cambiar a 'had to' en el estilo indirecto."
+            }
+        ];
+
+        // --- VIEWS ---
+
+        const Navbar = ({ activeTab, setActiveTab }) => (
+            <nav className="fixed top-0 left-0 w-full glass-panel z-50 px-4 md:px-6 py-4 border-b border-purple-100">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-purple-600 p-2 rounded-xl text-white shadow-lg">
+                            <i className="fa-solid fa-comments"></i>
+                        </div>
+                        <span className="font-extrabold text-lg md:text-xl tracking-tighter">
+                            Reported<span className="text-purple-600">Expert</span>
+                        </span>
+                    </div>
+                    <div className="hidden md:flex gap-1">
+                        {[
+                            { id: 'theory', label: 'Maestría', icon: 'fa-book' },
+                            { id: 'practice', label: 'Laboratorio', icon: 'fa-flask' },
+                            { id: 'quiz', label: 'Certificación', icon: 'fa-medal' }
+                        ].map(tab => (
+                            <button 
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`px-4 py-2 rounded-full font-bold text-sm transition-all flex items-center gap-2 ${
+                                    activeTab === tab.id 
+                                    ? 'bg-purple-600 text-white shadow-lg' 
+                                    : 'text-slate-500 hover:bg-purple-50'
+                                }`}
+                            >
+                                <i className={`fa-solid ${tab.icon}`}></i>
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </nav>
+        );
+
+        const TheoryView = () => (
+            <div className="max-w-6xl mx-auto py-8 px-4 md:px-6 pb-24 space-y-12">
+                <header className="text-center space-y-4 pt-4">
+                    <motion.h1 
+                        initial={{ opacity: 0, y: -20 }} 
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-4xl md:text-6xl font-black text-slate-900"
+                    >
+                        The Art of <span className="text-purple-600">Reported Speech</span>
+                    </motion.h1>
+                    <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+                        Dominar el estilo indirecto es clave para reportar lo que otros dicen de forma natural y profesional.
+                    </p>
+                </header>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {BACKSHIFT_DATA.map((rule) => (
+                        <div key={rule.id} className="bg-white p-6 rounded-[2rem] shadow-sm border border-purple-50 flex flex-col h-full hover:shadow-md transition-shadow">
+                            <h3 className="text-xl font-black text-slate-800 mb-1">{rule.directTense}</h3>
+                            <div className="flex items-center gap-2 text-purple-600 font-bold text-xs uppercase mb-6 bg-purple-50 px-3 py-1 rounded-full w-fit">
+                                <span>becomes</span>
+                                <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                                <span>{rule.reportedTense}</span>
+                            </div>
+                            
+                            <div className="space-y-4 mb-6 flex-grow">
+                                <div className="direct-speech-bubble text-sm italic">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <p className="text-slate-400 font-bold text-[10px] uppercase">Direct</p>
+                                        <button onClick={() => speak(rule.exampleDirect)} className="text-slate-300 hover:text-purple-500"><i className="fa-solid fa-volume-high"></i></button>
+                                    </div>
+                                    <p className="text-slate-700">"{rule.exampleDirect}"</p>
+                                </div>
+                                <div className="reported-speech-bubble text-sm font-bold">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <p className="text-pink-400 font-bold text-[10px] uppercase">Reported</p>
+                                        <button onClick={() => speak(rule.exampleReported)} className="text-pink-300 hover:text-pink-600"><i className="fa-solid fa-volume-high"></i></button>
+                                    </div>
+                                    <p className="text-slate-800">{rule.exampleReported}</p>
+                                </div>
+                            </div>
+                            <div className="mt-auto pt-4 border-t border-slate-50">
+                                <p className="text-[11px] leading-relaxed text-slate-500 italic">
+                                    <strong>💡 Nota:</strong> {rule.note}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white">
+                        <h2 className="text-2xl font-black mb-6 flex items-center gap-3">
+                            <i className="fa-solid fa-clock text-cyan-400"></i> Time & Place Changes
+                        </h2>
+                        <div className="grid grid-cols-2 gap-3">
+                            {TIME_PLACE_CHANGES.map((item, i) => (
+                                <div key={i} className="flex items-center justify-between bg-white/5 p-3 rounded-xl border border-white/10 text-sm">
+                                    <span className="text-cyan-400 font-medium">{item.from}</span>
+                                    <i className="fa-solid fa-arrow-right text-[10px] opacity-20"></i>
+                                    <span className="font-bold text-slate-100">{item.to}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-purple-100 flex flex-col justify-center">
+                        <h2 className="text-2xl font-black mb-4 text-slate-800 flex items-center gap-3">
+                            <i className="fa-solid fa-bullhorn text-purple-600"></i> Reporting Verbs
+                        </h2>
+                        <p className="text-slate-600 text-sm mb-6 leading-relaxed">
+                            No te limites a usar solo "say" o "tell". En B2, usa verbos que añadan matices de intención:
+                        </p>
+                        <div className="flex flex-wrap gap-2 mb-6">
+                            {['promised', 'admitted', 'complained', 'explained', 'mentioned', 'reminded'].map(v => (
+                                <span key={v} className="px-3 py-1 bg-purple-50 text-purple-700 rounded-lg text-xs font-bold border border-purple-100">{v}</span>
+                            ))}
+                        </div>
+                        <div className="p-4 bg-pink-50 rounded-2xl border border-pink-100 text-sm italic">
+                            <p><strong>He said me... ❌</strong></p>
+                            <p><strong>He told me... ✅</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const PracticeView = () => {
+            const [idx, setIdx] = useState(0);
+            const [input, setInput] = useState("");
+            const [feedback, setFeedback] = useState(null);
+            const [evaluando, setEvaluando] = useState(false);
+
+            const curr = PRACTICE_SENTENCES[idx];
+
+            const handleCheck = () => {
+                const normUser = input.trim().toLowerCase().replace(/[.,!]/g, "");
+                const normCorrect = curr.correct.toLowerCase().replace(/[.,!]/g, "");
+                if (normUser.includes(normCorrect) || normCorrect.includes(normUser)) {
+                    setFeedback(true);
+                    confetti({ particleCount: 80, spread: 60 });
+                } else setFeedback(false);
+                setEvaluando(true);
+            };
+
+            const handleNext = () => {
+                if (idx < PRACTICE_SENTENCES.length - 1) {
+                    setIdx(idx + 1);
+                    setInput("");
+                    setFeedback(null);
+                    setEvaluando(false);
+                }
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto py-8 px-4">
+                    <div className="bg-white rounded-[3rem] shadow-xl overflow-hidden border border-purple-100">
+                        <div className="bg-purple-600 p-8 text-white text-center">
+                            <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Desafío de Retroceso</p>
+                            <h2 className="text-2xl font-bold mt-1">Laboratorio de Reporte</h2>
+                            <div className="mt-4 flex justify-center gap-2">
+                                <span className="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold">Nivel: {curr.tense}</span>
+                            </div>
+                        </div>
+                        <div className="p-8 md:p-12 space-y-10">
+                            <div className="text-center italic">
+                                <h3 className="text-2xl font-black text-slate-800">"{curr.direct}"</h3>
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-sm font-bold text-slate-500 block">Escribe el estilo indirecto:</label>
+                                <textarea 
+                                    className={`w-full p-5 rounded-2xl border-2 text-lg outline-none transition-all resize-none ${feedback === true ? 'border-success bg-green-50' : feedback === false ? 'border-pink-500 bg-pink-50' : 'border-slate-100 focus:border-purple-600'}`}
+                                    placeholder="He said that..."
+                                    rows="2"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                />
+                                <p className="text-[11px] text-slate-400 italic">💡 {curr.hint}</p>
+                            </div>
+                            <AnimatePresence>
+                                {evaluando && (
+                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`p-6 rounded-2xl ${feedback ? 'bg-green-50 border border-green-200 text-green-900' : 'bg-pink-50 border border-pink-200 text-pink-900'}`}>
+                                        <p className="font-bold mb-2">{feedback ? '¡Correcto!' : '¡Casi!'}</p>
+                                        <p className="text-sm mb-2"><strong>R:</strong> {curr.correct}.</p>
+                                        <p className="text-xs opacity-75">{curr.explanation}</p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                            <div className="flex justify-end gap-3 pt-6 border-t border-slate-50">
+                                {!evaluando ? (
+                                    <button onClick={handleCheck} disabled={!input} className="bg-purple-600 text-white px-8 py-3 rounded-full font-bold shadow-lg shadow-purple-100 disabled:opacity-50">Comprobar</button>
+                                ) : (
+                                    <button onClick={handleNext} className="bg-slate-900 text-white px-8 py-3 rounded-full font-bold shadow-lg">Siguiente <i className="fa-solid fa-arrow-right ml-1"></i></button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const QuizView = () => {
+            const [currQ, setCurrQ] = useState(0);
+            const [score, setScore] = useState(0);
+            const [selected, setSelected] = useState(null);
+            const [evaluado, setEvaluado] = useState(false);
+            const [finalizado, setFinalizado] = useState(false);
+
+            const q = QUIZ_QUESTIONS[currQ];
+
+            const handleAns = (i) => {
+                if (evaluado) return;
+                setSelected(i);
+                setEvaluado(true);
+                if (i === q.answer) setScore(score + 1);
+            };
+
+            const handleNext = () => {
+                if (currQ < QUIZ_QUESTIONS.length - 1) {
+                    setCurrQ(currQ + 1);
+                    setSelected(null);
+                    setEvaluado(false);
+                } else {
+                    setFinalizado(true);
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                }
+            };
+
+            if (finalizado) return (
+                <div className="max-w-xl mx-auto py-12 px-4">
+                    <div className="bg-white p-12 rounded-[3rem] shadow-xl border border-purple-100 text-center space-y-6">
+                        <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto text-purple-600 text-3xl">
+                            <i className="fa-solid fa-award"></i>
+                        </div>
+                        <h2 className="text-4xl font-black text-slate-900">¡Resultados!</h2>
+                        <p className="text-8xl font-black text-purple-600">{score}<span className="text-3xl text-slate-300">/10</span></p>
+                        <p className="text-slate-500 font-medium">
+                            {score >= 8 ? "¡Excelente nivel B2!" : score >= 5 ? "Buen progreso, pero sigue practicando." : "Te recomendamos repasar la teoría."}
+                        </p>
+                        <button onClick={() => window.location.reload()} className="bg-purple-600 text-white px-10 py-4 rounded-full font-black text-lg shadow-lg">Volver al Inicio</button>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="max-w-4xl mx-auto py-8 px-4">
+                    <div className="bg-white rounded-[3rem] shadow-xl border border-purple-100 overflow-hidden">
+                        <div className="bg-slate-900 p-6 flex justify-between items-center text-white">
+                            <span className="font-bold text-xs uppercase tracking-widest text-purple-400">Certificación B2</span>
+                            <span className="font-black text-sm">{currQ + 1} / 10</span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-1.5">
+                            <div className="bg-purple-600 h-full transition-all duration-300" style={{ width: `${((currQ + 1) / 10) * 100}%` }}></div>
+                        </div>
+                        <div className="p-8 md:p-14 space-y-10">
+                            <h3 className="text-2xl md:text-3xl font-black text-slate-800 leading-tight">{q.question}</h3>
+                            <div className="grid gap-3">
+                                {q.options.map((opt, i) => {
+                                    let style = "p-5 rounded-2xl border-2 font-bold text-left transition-all flex items-center justify-between text-sm md:text-base ";
+                                    if (!evaluado) style += selected === i ? "border-purple-600 bg-purple-50 text-purple-700" : "border-slate-50 hover:bg-slate-50 text-slate-600";
+                                    else {
+                                        if (i === q.answer) style += "border-success bg-green-50 text-success";
+                                        else if (selected === i) style += "border-pink-500 bg-pink-50 text-pink-600";
+                                        else style += "border-slate-50 text-slate-300 opacity-60";
+                                    }
+                                    return (
+                                        <button key={i} onClick={() => handleAns(i)} className={style}>
+                                            {opt}
+                                            {evaluado && i === q.answer && <i className="fa-solid fa-check"></i>}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            <AnimatePresence>
+                                {evaluado && (
+                                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="bg-purple-50 p-5 rounded-2xl border border-purple-100 text-xs md:text-sm text-purple-800 italic">
+                                        <strong>💡 Análisis:</strong> {q.explanation}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                            <div className="flex justify-end pt-4">
+                                <button onClick={handleNext} disabled={!evaluado} className={`px-10 py-4 rounded-full font-black text-lg transition-all ${evaluado ? 'bg-purple-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400'}`}>
+                                    {currQ < 9 ? 'Siguiente' : 'Finalizar'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- MAIN ---
+
+        function App() {
+            const [tab, setTab] = useState('theory');
+
+            return (
+                <div className="min-h-screen pb-32 pt-20">
+                    <Navbar activeTab={tab} setActiveTab={setTab} />
+                    <main>
+                        <AnimatePresence mode="wait">
+                            {tab === 'theory' && <motion.div key="theory" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><TheoryView /></motion.div>}
+                            {tab === 'practice' && <motion.div key="practice" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}><PracticeView /></motion.div>}
+                            {tab === 'quiz' && <motion.div key="quiz" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}><QuizView /></motion.div>}
+                        </AnimatePresence>
+                    </main>
+
+                    {/* DECOR */}
+                    <div className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none opacity-40">
+                        <div className="absolute top-[20%] left-[-10%] w-96 h-96 bg-purple-100 rounded-full blur-[100px] float-anim"></div>
+                        <div className="absolute bottom-[20%] right-[-10%] w-80 h-80 bg-pink-100 rounded-full blur-[100px] float-anim" style={{ animationDelay: '2s' }}></div>
+                    </div>
+
+                    {/* MOBILE NAV */}
+                    <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 glass-panel px-3 py-2 rounded-full shadow-2xl z-[60] flex gap-1">
+                        {[
+                            { id: 'theory', icon: 'fa-book' },
+                            { id: 'practice', icon: 'fa-flask' },
+                            { id: 'quiz', icon: 'fa-medal' }
+                        ].map(t => (
+                            <button key={t.id} onClick={() => setTab(t.id)} className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${tab === t.id ? 'bg-purple-600 text-white' : 'text-slate-400'}`}>
+                                <i className={`fa-solid ${t.icon}`}></i>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
